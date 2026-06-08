@@ -34,3 +34,15 @@ Each interrupt number corresponds to a specific service routine stored in the In
 > Therefore, the complete range of interrupt services is given below:
 
 ---
+
+# INT 00h – Divide Error Interrupt
+
+## Definition
+INT 00h is a processor-generated interrupt in the 8086 microprocessor that occurs when a division error happens during execution. It is automatically triggered by the CPU when an invalid division operation is performed.
+
+## Uses
+- Handles **divide-by-zero errors**
+- Handles **overflow during division**
+- Used for **error detection in arithmetic operations**
+- Transfers control to the interrupt service routine (ISR) when a division fault occurs
+- Helps prevent system crash by safely handling invalid division operations
