@@ -62,3 +62,35 @@ int 00h       ; Normally handled automatically by CPU (not manually called)
 
 ---
 
+# INT 01h – Single-Step Interrupt
+
+## Definition
+INT 01h is a processor-generated interrupt that is triggered automatically after the execution of every instruction when the Trap Flag (TF) in the FLAGS register is set to 1. It is primarily used by debuggers to trace program execution line by line.
+
+---
+
+## Uses
+- Used for **single-stepping** through code
+- Essential for **debugging** applications
+- Allows monitoring of CPU registers and memory after each instruction
+- Stops execution temporarily so a debugger can take control
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+pushf           ; Save the current FLAGS register to the stack
+pop ax          ; Load FLAGS into AX
+or ah, 01h      ; Set the Trap Flag (TF) - bit 8 of FLAGS
+push ax         ; Push the modified FLAGS back to the stack
+popf            ; Update FLAGS, enabling single-step mode
+
+; The CPU will automatically trigger INT 01h after the next instruction
+mov bx, 0001h   
+
+int 01h         ; Can also be called manually to simulate a step
+```
+
+---
+
