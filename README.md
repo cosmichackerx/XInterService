@@ -1,4 +1,3 @@
-
 # Introduction to 8086 Assembly Language
 
 The Intel 8086 is a 16-bit microprocessor introduced in 1978 and is one of the most important processors in computer architecture. Assembly language for the 8086 provides a low-level programming interface that allows direct communication with the hardware through machine instructions.
@@ -90,6 +89,5816 @@ popf            ; Update FLAGS, enabling single-step mode
 mov bx, 0001h   
 
 int 01h         ; Can also be called manually to simulate a step
+```
+
+---
+
+# INT 02h – Non-Maskable Interrupt (NMI)
+
+## Definition
+INT 02h is a hardware interrupt that cannot be ignored or disabled by the CPU (even if the Interrupt Enable Flag, IF, is cleared). It is triggered by the NMI pin on the microprocessor and is reserved for critical hardware events that require immediate attention, such as memory parity errors or imminent power failure.
+
+---
+
+## Uses
+- Handles **critical hardware failures** (e.g., RAM parity errors)
+- Responds to **power failure warnings**
+- Cannot be masked (disabled) by the `CLI` (Clear Interrupt Flag) instruction
+- Guarantees the CPU will immediately service the most urgent hardware issues
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; INT 02h is triggered by a hardware signal on the NMI pin, 
+; not typically by software. However, it can be simulated:
+
+int 02h         ; Software can simulate an NMI for testing purposes
+
+; Normally, an external device signals the CPU's NMI pin.
+; The CPU then automatically jumps to the INT 02h handler in the IVT.
+```
+
+---
+
+# INT 03h – Breakpoint Interrupt
+
+## Definition
+INT 03h is a special software interrupt used primarily for debugging. It is a one-byte instruction (opcode CC) that debuggers insert into code to set a breakpoint, pausing execution so the programmer can inspect the program state.
+
+---
+
+## Uses
+- Setting breakpoints in debuggers
+- Pausing program execution for inspection
+- Checking CPU registers and memory at specific points
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+int 03h       ; Triggers a breakpoint to pause execution in a debugger
+```
+
+---
+
+# INT 04h – Overflow Interrupt
+
+## Definition
+INT 04h is triggered by the INTO (Interrupt on Overflow) instruction if the Overflow Flag (OF) is set to 1. It handles arithmetic overflows, particularly in signed arithmetic operations.
+
+---
+
+## Uses
+- Handling signed arithmetic overflows
+- Ensuring mathematical safety in calculations
+- Triggered manually via the INTO instruction
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+mov al, 7Fh   ; 127 in decimal
+add al, 1     ; Result is 128 (80h), which overflows a signed 8-bit register
+into          ; Triggers INT 04h because Overflow Flag (OF) is set
+```
+
+---
+
+# INT 05h – Print Screen Interrupt
+
+## Definition
+INT 05h is a BIOS interrupt used to print the contents of the screen to a printer. The CPU also triggers it automatically for a BOUND range exceeded exception on 80186+ processors.
+
+---
+
+## Uses
+- Dumping screen contents to a printer
+- Handling array bounds checking errors (80186+)
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+int 05h       ; Calls the BIOS print screen routine
+```
+
+---
+
+# INT 06h – Invalid Opcode Interrupt
+
+## Definition
+INT 06h is a processor exception that is triggered when the CPU attempts to execute an invalid or undefined machine language opcode. Introduced in the 80186/80286.
+
+---
+
+## Uses
+- Catching invalid instructions
+- Emulating instructions not supported by hardware
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+db 0Fh, 0FFh  ; Invalid opcode bytes will trigger INT 06h
+```
+
+---
+
+# INT 07h – Device Not Available (Math Coprocessor)
+
+## Definition
+INT 07h is triggered when the CPU attempts to execute an x87 floating-point instruction but no math coprocessor is present or task switching is required.
+
+---
+
+## Uses
+- Floating-point instruction emulation
+- Task switching for FPU context
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+finit         ; Will trigger INT 07h if no FPU is present
+```
+
+---
+
+# INT 08h – System Timer (IRQ0)
+
+## Definition
+INT 08h is a hardware interrupt triggered by the Programmable Interval Timer (PIT) at regular intervals (typically 18.2 times per second). It updates the system clock.
+
+---
+
+## Uses
+- Keeping track of system time
+- Scheduling and multi-tasking routines
+- Updating the BIOS time-of-day counter
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Typically triggered by hardware, not software.
+; Often hooked by TSR (Terminate and Stay Resident) programs:
+; The old INT 08h vector is saved, and a custom ISR is installed to run periodically.
+```
+
+---
+
+# INT 09h – Keyboard Interrupt (IRQ1)
+
+## Definition
+INT 09h is a hardware interrupt triggered whenever a key is pressed or released on the keyboard. The BIOS keyboard handler reads the scan code and stores it in the keyboard buffer.
+
+---
+
+## Uses
+- Reading keystrokes immediately
+- Handling special key combinations (Ctrl+Alt+Del)
+- Custom keyboard handlers (e.g., in games)
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Triggered by hardware on key press/release.
+; Custom games often hook INT 09h to handle multiple key presses at once.
+```
+
+---
+
+# INT 0Ah – Hardware / CPU Exception
+
+## Definition
+INT 0Ah is reserved by the CPU architecture for hardware exceptions or specialized functions.
+
+---
+
+## Uses
+- Reserved by Intel for CPU faults and traps
+- May be used by specific hardware configurations
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Typically triggered by the CPU itself.
+int 0Ah
+```
+
+---
+
+# INT 0Bh – Hardware / CPU Exception
+
+## Definition
+INT 0Bh is reserved by the CPU architecture for hardware exceptions or specialized functions.
+
+---
+
+## Uses
+- Reserved by Intel for CPU faults and traps
+- May be used by specific hardware configurations
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Typically triggered by the CPU itself.
+int 0Bh
+```
+
+---
+
+# INT 0Ch – Hardware / CPU Exception
+
+## Definition
+INT 0Ch is reserved by the CPU architecture for hardware exceptions or specialized functions.
+
+---
+
+## Uses
+- Reserved by Intel for CPU faults and traps
+- May be used by specific hardware configurations
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Typically triggered by the CPU itself.
+int 0Ch
+```
+
+---
+
+# INT 0Dh – Hardware / CPU Exception
+
+## Definition
+INT 0Dh is reserved by the CPU architecture for hardware exceptions or specialized functions.
+
+---
+
+## Uses
+- Reserved by Intel for CPU faults and traps
+- May be used by specific hardware configurations
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Typically triggered by the CPU itself.
+int 0Dh
+```
+
+---
+
+# INT 0Eh – Hardware / CPU Exception
+
+## Definition
+INT 0Eh is reserved by the CPU architecture for hardware exceptions or specialized functions.
+
+---
+
+## Uses
+- Reserved by Intel for CPU faults and traps
+- May be used by specific hardware configurations
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Typically triggered by the CPU itself.
+int 0Eh
+```
+
+---
+
+# INT 0Fh – Hardware / CPU Exception
+
+## Definition
+INT 0Fh is reserved by the CPU architecture for hardware exceptions or specialized functions.
+
+---
+
+## Uses
+- Reserved by Intel for CPU faults and traps
+- May be used by specific hardware configurations
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Typically triggered by the CPU itself.
+int 0Fh
+```
+
+---
+
+# INT 10h – Video Services
+
+## Definition
+INT 10h provides a collection of BIOS video services. It is used to clear the screen, set the video mode, print characters, and manipulate graphics and colors.
+
+---
+
+## Uses
+- Setting text and graphics modes
+- Drawing pixels and shapes
+- Printing text to the screen without DOS
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+mov ah, 0Eh   ; BIOS Teletype output function
+mov al, 'A'   ; Character to print
+int 10h       ; Print the character 'A' to the screen
+```
+
+---
+
+# INT 11h – BIOS Service / Hardware IRQ
+
+## Definition
+INT 11h is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 11h
+```
+
+---
+
+# INT 12h – BIOS Service / Hardware IRQ
+
+## Definition
+INT 12h is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 12h
+```
+
+---
+
+# INT 13h – Disk Services
+
+## Definition
+INT 13h provides BIOS disk services to read, write, and format disk sectors directly. It allows low-level disk access bypassing the operating system.
+
+---
+
+## Uses
+- Reading and writing floppy or hard disks
+- Bootloaders loading an OS from disk
+- Low-level disk diagnostics
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+mov ah, 02h   ; Function: Read Sectors
+mov al, 1     ; Number of sectors to read
+mov ch, 0     ; Cylinder 0
+mov cl, 2     ; Sector 2
+mov dh, 0     ; Head 0
+mov dl, 80h   ; First Hard Drive
+mov bx, buffer; Destination memory address
+int 13h       ; Execute read
+```
+
+---
+
+# INT 14h – BIOS Service / Hardware IRQ
+
+## Definition
+INT 14h is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 14h
+```
+
+---
+
+# INT 15h – BIOS Service / Hardware IRQ
+
+## Definition
+INT 15h is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 15h
+```
+
+---
+
+# INT 16h – Keyboard Services
+
+## Definition
+INT 16h provides BIOS services to read from the keyboard buffer. Unlike INT 09h (which is hardware), INT 16h allows software to safely retrieve typed characters.
+
+---
+
+## Uses
+- Waiting for a key press
+- Checking keyboard status
+- Reading characters for input fields
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+mov ah, 00h   ; Function: Wait for key press
+int 16h       ; Halts execution until a key is pressed
+; AL will contain the ASCII code, AH will contain the scan code
+```
+
+---
+
+# INT 17h – BIOS Service / Hardware IRQ
+
+## Definition
+INT 17h is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 17h
+```
+
+---
+
+# INT 18h – BIOS Service / Hardware IRQ
+
+## Definition
+INT 18h is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 18h
+```
+
+---
+
+# INT 19h – BIOS Service / Hardware IRQ
+
+## Definition
+INT 19h is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 19h
+```
+
+---
+
+# INT 1Ah – BIOS Service / Hardware IRQ
+
+## Definition
+INT 1Ah is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 1Ah
+```
+
+---
+
+# INT 1Bh – BIOS Service / Hardware IRQ
+
+## Definition
+INT 1Bh is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 1Bh
+```
+
+---
+
+# INT 1Ch – BIOS Service / Hardware IRQ
+
+## Definition
+INT 1Ch is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 1Ch
+```
+
+---
+
+# INT 1Dh – BIOS Service / Hardware IRQ
+
+## Definition
+INT 1Dh is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 1Dh
+```
+
+---
+
+# INT 1Eh – BIOS Service / Hardware IRQ
+
+## Definition
+INT 1Eh is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 1Eh
+```
+
+---
+
+# INT 1Fh – BIOS Service / Hardware IRQ
+
+## Definition
+INT 1Fh is part of the BIOS services or secondary hardware IRQs (IRQ8-IRQ15).
+
+---
+
+## Uses
+- Standardized BIOS routines
+- Peripheral hardware communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Handled by BIOS or peripheral drivers.
+int 1Fh
+```
+
+---
+
+# INT 20h – DOS Terminate Program
+
+## Definition
+INT 20h is an early DOS interrupt used to exit a program and return control to the operating system (Command.com). It requires the CS register to point to the Program Segment Prefix (PSP).
+
+---
+
+## Uses
+- Exiting COM programs safely
+- Returning control to DOS
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+int 20h       ; Terminate program and exit to DOS
+```
+
+---
+
+# INT 21h – DOS API Services
+
+## Definition
+INT 21h is the primary gateway to MS-DOS services. It provides hundreds of functions for file I/O, console input/output, memory management, and process control.
+
+---
+
+## Uses
+- Printing strings to the console
+- Reading and writing files
+- Allocating memory
+- Exiting programs with return codes (Function 4Ch)
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+mov ah, 09h   ; DOS function: Print String
+mov dx, offset message ; Pointer to a '$' terminated string
+int 21h       ; Print the string
+
+mov ah, 4Ch   ; DOS function: Terminate Program
+mov al, 00h   ; Exit code 0
+int 21h       ; Safely exit back to DOS
+```
+
+---
+
+# INT 22h – DOS Service / Reserved
+
+## Definition
+INT 22h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 22h
+```
+
+---
+
+# INT 23h – DOS Service / Reserved
+
+## Definition
+INT 23h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 23h
+```
+
+---
+
+# INT 24h – DOS Service / Reserved
+
+## Definition
+INT 24h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 24h
+```
+
+---
+
+# INT 25h – DOS Service / Reserved
+
+## Definition
+INT 25h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 25h
+```
+
+---
+
+# INT 26h – DOS Service / Reserved
+
+## Definition
+INT 26h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 26h
+```
+
+---
+
+# INT 27h – DOS Service / Reserved
+
+## Definition
+INT 27h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 27h
+```
+
+---
+
+# INT 28h – DOS Service / Reserved
+
+## Definition
+INT 28h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 28h
+```
+
+---
+
+# INT 29h – DOS Service / Reserved
+
+## Definition
+INT 29h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 29h
+```
+
+---
+
+# INT 2Ah – DOS Service / Reserved
+
+## Definition
+INT 2Ah is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 2Ah
+```
+
+---
+
+# INT 2Bh – DOS Service / Reserved
+
+## Definition
+INT 2Bh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 2Bh
+```
+
+---
+
+# INT 2Ch – DOS Service / Reserved
+
+## Definition
+INT 2Ch is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 2Ch
+```
+
+---
+
+# INT 2Dh – DOS Service / Reserved
+
+## Definition
+INT 2Dh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 2Dh
+```
+
+---
+
+# INT 2Eh – DOS Service / Reserved
+
+## Definition
+INT 2Eh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 2Eh
+```
+
+---
+
+# INT 2Fh – DOS Service / Reserved
+
+## Definition
+INT 2Fh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 2Fh
+```
+
+---
+
+# INT 30h – DOS Service / Reserved
+
+## Definition
+INT 30h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 30h
+```
+
+---
+
+# INT 31h – DOS Service / Reserved
+
+## Definition
+INT 31h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 31h
+```
+
+---
+
+# INT 32h – DOS Service / Reserved
+
+## Definition
+INT 32h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 32h
+```
+
+---
+
+# INT 33h – Mouse Services
+
+## Definition
+INT 33h is used to interact with the mouse driver (like Microsoft Mouse driver). It provides functions to show the mouse cursor, read its position, and check button clicks.
+
+---
+
+## Uses
+- Showing or hiding the mouse pointer
+- Reading mouse X/Y coordinates
+- Detecting left and right clicks
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+mov ax, 0001h ; Function: Show mouse cursor
+int 33h       ; Display the cursor on the screen
+
+mov ax, 0003h ; Function: Get mouse position and button status
+int 33h       ; CX = X coord, DX = Y coord, BX = Button status
+```
+
+---
+
+# INT 34h – DOS Service / Reserved
+
+## Definition
+INT 34h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 34h
+```
+
+---
+
+# INT 35h – DOS Service / Reserved
+
+## Definition
+INT 35h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 35h
+```
+
+---
+
+# INT 36h – DOS Service / Reserved
+
+## Definition
+INT 36h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 36h
+```
+
+---
+
+# INT 37h – DOS Service / Reserved
+
+## Definition
+INT 37h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 37h
+```
+
+---
+
+# INT 38h – DOS Service / Reserved
+
+## Definition
+INT 38h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 38h
+```
+
+---
+
+# INT 39h – DOS Service / Reserved
+
+## Definition
+INT 39h is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 39h
+```
+
+---
+
+# INT 3Ah – DOS Service / Reserved
+
+## Definition
+INT 3Ah is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 3Ah
+```
+
+---
+
+# INT 3Bh – DOS Service / Reserved
+
+## Definition
+INT 3Bh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 3Bh
+```
+
+---
+
+# INT 3Ch – DOS Service / Reserved
+
+## Definition
+INT 3Ch is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 3Ch
+```
+
+---
+
+# INT 3Dh – DOS Service / Reserved
+
+## Definition
+INT 3Dh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 3Dh
+```
+
+---
+
+# INT 3Eh – DOS Service / Reserved
+
+## Definition
+INT 3Eh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 3Eh
+```
+
+---
+
+# INT 3Fh – DOS Service / Reserved
+
+## Definition
+INT 3Fh is typically reserved for DOS API functions or popular driver services (e.g., networking, mouse).
+
+---
+
+## Uses
+- Operating system API calls
+- Driver communication
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Dependent on installed drivers or OS.
+int 3Fh
+```
+
+---
+
+# INT 40h – User Defined / Reserved Interrupt
+
+## Definition
+INT 40h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 40h
+```
+
+---
+
+# INT 41h – User Defined / Reserved Interrupt
+
+## Definition
+INT 41h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 41h
+```
+
+---
+
+# INT 42h – User Defined / Reserved Interrupt
+
+## Definition
+INT 42h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 42h
+```
+
+---
+
+# INT 43h – User Defined / Reserved Interrupt
+
+## Definition
+INT 43h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 43h
+```
+
+---
+
+# INT 44h – User Defined / Reserved Interrupt
+
+## Definition
+INT 44h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 44h
+```
+
+---
+
+# INT 45h – User Defined / Reserved Interrupt
+
+## Definition
+INT 45h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 45h
+```
+
+---
+
+# INT 46h – User Defined / Reserved Interrupt
+
+## Definition
+INT 46h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 46h
+```
+
+---
+
+# INT 47h – User Defined / Reserved Interrupt
+
+## Definition
+INT 47h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 47h
+```
+
+---
+
+# INT 48h – User Defined / Reserved Interrupt
+
+## Definition
+INT 48h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 48h
+```
+
+---
+
+# INT 49h – User Defined / Reserved Interrupt
+
+## Definition
+INT 49h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 49h
+```
+
+---
+
+# INT 4Ah – User Defined / Reserved Interrupt
+
+## Definition
+INT 4Ah is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 4Ah
+```
+
+---
+
+# INT 4Bh – User Defined / Reserved Interrupt
+
+## Definition
+INT 4Bh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 4Bh
+```
+
+---
+
+# INT 4Ch – User Defined / Reserved Interrupt
+
+## Definition
+INT 4Ch is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 4Ch
+```
+
+---
+
+# INT 4Dh – User Defined / Reserved Interrupt
+
+## Definition
+INT 4Dh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 4Dh
+```
+
+---
+
+# INT 4Eh – User Defined / Reserved Interrupt
+
+## Definition
+INT 4Eh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 4Eh
+```
+
+---
+
+# INT 4Fh – User Defined / Reserved Interrupt
+
+## Definition
+INT 4Fh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 4Fh
+```
+
+---
+
+# INT 50h – User Defined / Reserved Interrupt
+
+## Definition
+INT 50h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 50h
+```
+
+---
+
+# INT 51h – User Defined / Reserved Interrupt
+
+## Definition
+INT 51h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 51h
+```
+
+---
+
+# INT 52h – User Defined / Reserved Interrupt
+
+## Definition
+INT 52h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 52h
+```
+
+---
+
+# INT 53h – User Defined / Reserved Interrupt
+
+## Definition
+INT 53h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 53h
+```
+
+---
+
+# INT 54h – User Defined / Reserved Interrupt
+
+## Definition
+INT 54h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 54h
+```
+
+---
+
+# INT 55h – User Defined / Reserved Interrupt
+
+## Definition
+INT 55h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 55h
+```
+
+---
+
+# INT 56h – User Defined / Reserved Interrupt
+
+## Definition
+INT 56h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 56h
+```
+
+---
+
+# INT 57h – User Defined / Reserved Interrupt
+
+## Definition
+INT 57h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 57h
+```
+
+---
+
+# INT 58h – User Defined / Reserved Interrupt
+
+## Definition
+INT 58h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 58h
+```
+
+---
+
+# INT 59h – User Defined / Reserved Interrupt
+
+## Definition
+INT 59h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 59h
+```
+
+---
+
+# INT 5Ah – User Defined / Reserved Interrupt
+
+## Definition
+INT 5Ah is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 5Ah
+```
+
+---
+
+# INT 5Bh – User Defined / Reserved Interrupt
+
+## Definition
+INT 5Bh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 5Bh
+```
+
+---
+
+# INT 5Ch – User Defined / Reserved Interrupt
+
+## Definition
+INT 5Ch is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 5Ch
+```
+
+---
+
+# INT 5Dh – User Defined / Reserved Interrupt
+
+## Definition
+INT 5Dh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 5Dh
+```
+
+---
+
+# INT 5Eh – User Defined / Reserved Interrupt
+
+## Definition
+INT 5Eh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 5Eh
+```
+
+---
+
+# INT 5Fh – User Defined / Reserved Interrupt
+
+## Definition
+INT 5Fh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 5Fh
+```
+
+---
+
+# INT 60h – User Defined / Reserved Interrupt
+
+## Definition
+INT 60h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 60h
+```
+
+---
+
+# INT 61h – User Defined / Reserved Interrupt
+
+## Definition
+INT 61h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 61h
+```
+
+---
+
+# INT 62h – User Defined / Reserved Interrupt
+
+## Definition
+INT 62h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 62h
+```
+
+---
+
+# INT 63h – User Defined / Reserved Interrupt
+
+## Definition
+INT 63h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 63h
+```
+
+---
+
+# INT 64h – User Defined / Reserved Interrupt
+
+## Definition
+INT 64h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 64h
+```
+
+---
+
+# INT 65h – User Defined / Reserved Interrupt
+
+## Definition
+INT 65h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 65h
+```
+
+---
+
+# INT 66h – User Defined / Reserved Interrupt
+
+## Definition
+INT 66h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 66h
+```
+
+---
+
+# INT 67h – User Defined / Reserved Interrupt
+
+## Definition
+INT 67h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 67h
+```
+
+---
+
+# INT 68h – User Defined / Reserved Interrupt
+
+## Definition
+INT 68h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 68h
+```
+
+---
+
+# INT 69h – User Defined / Reserved Interrupt
+
+## Definition
+INT 69h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 69h
+```
+
+---
+
+# INT 6Ah – User Defined / Reserved Interrupt
+
+## Definition
+INT 6Ah is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 6Ah
+```
+
+---
+
+# INT 6Bh – User Defined / Reserved Interrupt
+
+## Definition
+INT 6Bh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 6Bh
+```
+
+---
+
+# INT 6Ch – User Defined / Reserved Interrupt
+
+## Definition
+INT 6Ch is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 6Ch
+```
+
+---
+
+# INT 6Dh – User Defined / Reserved Interrupt
+
+## Definition
+INT 6Dh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 6Dh
+```
+
+---
+
+# INT 6Eh – User Defined / Reserved Interrupt
+
+## Definition
+INT 6Eh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 6Eh
+```
+
+---
+
+# INT 6Fh – User Defined / Reserved Interrupt
+
+## Definition
+INT 6Fh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 6Fh
+```
+
+---
+
+# INT 70h – User Defined / Reserved Interrupt
+
+## Definition
+INT 70h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 70h
+```
+
+---
+
+# INT 71h – User Defined / Reserved Interrupt
+
+## Definition
+INT 71h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 71h
+```
+
+---
+
+# INT 72h – User Defined / Reserved Interrupt
+
+## Definition
+INT 72h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 72h
+```
+
+---
+
+# INT 73h – User Defined / Reserved Interrupt
+
+## Definition
+INT 73h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 73h
+```
+
+---
+
+# INT 74h – User Defined / Reserved Interrupt
+
+## Definition
+INT 74h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 74h
+```
+
+---
+
+# INT 75h – User Defined / Reserved Interrupt
+
+## Definition
+INT 75h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 75h
+```
+
+---
+
+# INT 76h – User Defined / Reserved Interrupt
+
+## Definition
+INT 76h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 76h
+```
+
+---
+
+# INT 77h – User Defined / Reserved Interrupt
+
+## Definition
+INT 77h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 77h
+```
+
+---
+
+# INT 78h – User Defined / Reserved Interrupt
+
+## Definition
+INT 78h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 78h
+```
+
+---
+
+# INT 79h – User Defined / Reserved Interrupt
+
+## Definition
+INT 79h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 79h
+```
+
+---
+
+# INT 7Ah – User Defined / Reserved Interrupt
+
+## Definition
+INT 7Ah is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 7Ah
+```
+
+---
+
+# INT 7Bh – User Defined / Reserved Interrupt
+
+## Definition
+INT 7Bh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 7Bh
+```
+
+---
+
+# INT 7Ch – User Defined / Reserved Interrupt
+
+## Definition
+INT 7Ch is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 7Ch
+```
+
+---
+
+# INT 7Dh – User Defined / Reserved Interrupt
+
+## Definition
+INT 7Dh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 7Dh
+```
+
+---
+
+# INT 7Eh – User Defined / Reserved Interrupt
+
+## Definition
+INT 7Eh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 7Eh
+```
+
+---
+
+# INT 7Fh – User Defined / Reserved Interrupt
+
+## Definition
+INT 7Fh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 7Fh
+```
+
+---
+
+# INT 80h – User Defined / Reserved Interrupt
+
+## Definition
+INT 80h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 80h
+```
+
+---
+
+# INT 81h – User Defined / Reserved Interrupt
+
+## Definition
+INT 81h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 81h
+```
+
+---
+
+# INT 82h – User Defined / Reserved Interrupt
+
+## Definition
+INT 82h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 82h
+```
+
+---
+
+# INT 83h – User Defined / Reserved Interrupt
+
+## Definition
+INT 83h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 83h
+```
+
+---
+
+# INT 84h – User Defined / Reserved Interrupt
+
+## Definition
+INT 84h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 84h
+```
+
+---
+
+# INT 85h – User Defined / Reserved Interrupt
+
+## Definition
+INT 85h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 85h
+```
+
+---
+
+# INT 86h – User Defined / Reserved Interrupt
+
+## Definition
+INT 86h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 86h
+```
+
+---
+
+# INT 87h – User Defined / Reserved Interrupt
+
+## Definition
+INT 87h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 87h
+```
+
+---
+
+# INT 88h – User Defined / Reserved Interrupt
+
+## Definition
+INT 88h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 88h
+```
+
+---
+
+# INT 89h – User Defined / Reserved Interrupt
+
+## Definition
+INT 89h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 89h
+```
+
+---
+
+# INT 8Ah – User Defined / Reserved Interrupt
+
+## Definition
+INT 8Ah is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 8Ah
+```
+
+---
+
+# INT 8Bh – User Defined / Reserved Interrupt
+
+## Definition
+INT 8Bh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 8Bh
+```
+
+---
+
+# INT 8Ch – User Defined / Reserved Interrupt
+
+## Definition
+INT 8Ch is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 8Ch
+```
+
+---
+
+# INT 8Dh – User Defined / Reserved Interrupt
+
+## Definition
+INT 8Dh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 8Dh
+```
+
+---
+
+# INT 8Eh – User Defined / Reserved Interrupt
+
+## Definition
+INT 8Eh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 8Eh
+```
+
+---
+
+# INT 8Fh – User Defined / Reserved Interrupt
+
+## Definition
+INT 8Fh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 8Fh
+```
+
+---
+
+# INT 90h – User Defined / Reserved Interrupt
+
+## Definition
+INT 90h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 90h
+```
+
+---
+
+# INT 91h – User Defined / Reserved Interrupt
+
+## Definition
+INT 91h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 91h
+```
+
+---
+
+# INT 92h – User Defined / Reserved Interrupt
+
+## Definition
+INT 92h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 92h
+```
+
+---
+
+# INT 93h – User Defined / Reserved Interrupt
+
+## Definition
+INT 93h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 93h
+```
+
+---
+
+# INT 94h – User Defined / Reserved Interrupt
+
+## Definition
+INT 94h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 94h
+```
+
+---
+
+# INT 95h – User Defined / Reserved Interrupt
+
+## Definition
+INT 95h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 95h
+```
+
+---
+
+# INT 96h – User Defined / Reserved Interrupt
+
+## Definition
+INT 96h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 96h
+```
+
+---
+
+# INT 97h – User Defined / Reserved Interrupt
+
+## Definition
+INT 97h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 97h
+```
+
+---
+
+# INT 98h – User Defined / Reserved Interrupt
+
+## Definition
+INT 98h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 98h
+```
+
+---
+
+# INT 99h – User Defined / Reserved Interrupt
+
+## Definition
+INT 99h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 99h
+```
+
+---
+
+# INT 9Ah – User Defined / Reserved Interrupt
+
+## Definition
+INT 9Ah is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 9Ah
+```
+
+---
+
+# INT 9Bh – User Defined / Reserved Interrupt
+
+## Definition
+INT 9Bh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 9Bh
+```
+
+---
+
+# INT 9Ch – User Defined / Reserved Interrupt
+
+## Definition
+INT 9Ch is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 9Ch
+```
+
+---
+
+# INT 9Dh – User Defined / Reserved Interrupt
+
+## Definition
+INT 9Dh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 9Dh
+```
+
+---
+
+# INT 9Eh – User Defined / Reserved Interrupt
+
+## Definition
+INT 9Eh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 9Eh
+```
+
+---
+
+# INT 9Fh – User Defined / Reserved Interrupt
+
+## Definition
+INT 9Fh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int 9Fh
+```
+
+---
+
+# INT A0h – User Defined / Reserved Interrupt
+
+## Definition
+INT A0h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A0h
+```
+
+---
+
+# INT A1h – User Defined / Reserved Interrupt
+
+## Definition
+INT A1h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A1h
+```
+
+---
+
+# INT A2h – User Defined / Reserved Interrupt
+
+## Definition
+INT A2h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A2h
+```
+
+---
+
+# INT A3h – User Defined / Reserved Interrupt
+
+## Definition
+INT A3h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A3h
+```
+
+---
+
+# INT A4h – User Defined / Reserved Interrupt
+
+## Definition
+INT A4h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A4h
+```
+
+---
+
+# INT A5h – User Defined / Reserved Interrupt
+
+## Definition
+INT A5h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A5h
+```
+
+---
+
+# INT A6h – User Defined / Reserved Interrupt
+
+## Definition
+INT A6h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A6h
+```
+
+---
+
+# INT A7h – User Defined / Reserved Interrupt
+
+## Definition
+INT A7h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A7h
+```
+
+---
+
+# INT A8h – User Defined / Reserved Interrupt
+
+## Definition
+INT A8h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A8h
+```
+
+---
+
+# INT A9h – User Defined / Reserved Interrupt
+
+## Definition
+INT A9h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int A9h
+```
+
+---
+
+# INT AAh – User Defined / Reserved Interrupt
+
+## Definition
+INT AAh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int AAh
+```
+
+---
+
+# INT ABh – User Defined / Reserved Interrupt
+
+## Definition
+INT ABh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int ABh
+```
+
+---
+
+# INT ACh – User Defined / Reserved Interrupt
+
+## Definition
+INT ACh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int ACh
+```
+
+---
+
+# INT ADh – User Defined / Reserved Interrupt
+
+## Definition
+INT ADh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int ADh
+```
+
+---
+
+# INT AEh – User Defined / Reserved Interrupt
+
+## Definition
+INT AEh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int AEh
+```
+
+---
+
+# INT AFh – User Defined / Reserved Interrupt
+
+## Definition
+INT AFh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int AFh
+```
+
+---
+
+# INT B0h – User Defined / Reserved Interrupt
+
+## Definition
+INT B0h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B0h
+```
+
+---
+
+# INT B1h – User Defined / Reserved Interrupt
+
+## Definition
+INT B1h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B1h
+```
+
+---
+
+# INT B2h – User Defined / Reserved Interrupt
+
+## Definition
+INT B2h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B2h
+```
+
+---
+
+# INT B3h – User Defined / Reserved Interrupt
+
+## Definition
+INT B3h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B3h
+```
+
+---
+
+# INT B4h – User Defined / Reserved Interrupt
+
+## Definition
+INT B4h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B4h
+```
+
+---
+
+# INT B5h – User Defined / Reserved Interrupt
+
+## Definition
+INT B5h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B5h
+```
+
+---
+
+# INT B6h – User Defined / Reserved Interrupt
+
+## Definition
+INT B6h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B6h
+```
+
+---
+
+# INT B7h – User Defined / Reserved Interrupt
+
+## Definition
+INT B7h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B7h
+```
+
+---
+
+# INT B8h – User Defined / Reserved Interrupt
+
+## Definition
+INT B8h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B8h
+```
+
+---
+
+# INT B9h – User Defined / Reserved Interrupt
+
+## Definition
+INT B9h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int B9h
+```
+
+---
+
+# INT BAh – User Defined / Reserved Interrupt
+
+## Definition
+INT BAh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int BAh
+```
+
+---
+
+# INT BBh – User Defined / Reserved Interrupt
+
+## Definition
+INT BBh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int BBh
+```
+
+---
+
+# INT BCh – User Defined / Reserved Interrupt
+
+## Definition
+INT BCh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int BCh
+```
+
+---
+
+# INT BDh – User Defined / Reserved Interrupt
+
+## Definition
+INT BDh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int BDh
+```
+
+---
+
+# INT BEh – User Defined / Reserved Interrupt
+
+## Definition
+INT BEh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int BEh
+```
+
+---
+
+# INT BFh – User Defined / Reserved Interrupt
+
+## Definition
+INT BFh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int BFh
+```
+
+---
+
+# INT C0h – User Defined / Reserved Interrupt
+
+## Definition
+INT C0h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C0h
+```
+
+---
+
+# INT C1h – User Defined / Reserved Interrupt
+
+## Definition
+INT C1h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C1h
+```
+
+---
+
+# INT C2h – User Defined / Reserved Interrupt
+
+## Definition
+INT C2h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C2h
+```
+
+---
+
+# INT C3h – User Defined / Reserved Interrupt
+
+## Definition
+INT C3h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C3h
+```
+
+---
+
+# INT C4h – User Defined / Reserved Interrupt
+
+## Definition
+INT C4h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C4h
+```
+
+---
+
+# INT C5h – User Defined / Reserved Interrupt
+
+## Definition
+INT C5h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C5h
+```
+
+---
+
+# INT C6h – User Defined / Reserved Interrupt
+
+## Definition
+INT C6h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C6h
+```
+
+---
+
+# INT C7h – User Defined / Reserved Interrupt
+
+## Definition
+INT C7h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C7h
+```
+
+---
+
+# INT C8h – User Defined / Reserved Interrupt
+
+## Definition
+INT C8h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C8h
+```
+
+---
+
+# INT C9h – User Defined / Reserved Interrupt
+
+## Definition
+INT C9h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int C9h
+```
+
+---
+
+# INT CAh – User Defined / Reserved Interrupt
+
+## Definition
+INT CAh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int CAh
+```
+
+---
+
+# INT CBh – User Defined / Reserved Interrupt
+
+## Definition
+INT CBh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int CBh
+```
+
+---
+
+# INT CCh – User Defined / Reserved Interrupt
+
+## Definition
+INT CCh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int CCh
+```
+
+---
+
+# INT CDh – User Defined / Reserved Interrupt
+
+## Definition
+INT CDh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int CDh
+```
+
+---
+
+# INT CEh – User Defined / Reserved Interrupt
+
+## Definition
+INT CEh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int CEh
+```
+
+---
+
+# INT CFh – User Defined / Reserved Interrupt
+
+## Definition
+INT CFh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int CFh
+```
+
+---
+
+# INT D0h – User Defined / Reserved Interrupt
+
+## Definition
+INT D0h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D0h
+```
+
+---
+
+# INT D1h – User Defined / Reserved Interrupt
+
+## Definition
+INT D1h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D1h
+```
+
+---
+
+# INT D2h – User Defined / Reserved Interrupt
+
+## Definition
+INT D2h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D2h
+```
+
+---
+
+# INT D3h – User Defined / Reserved Interrupt
+
+## Definition
+INT D3h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D3h
+```
+
+---
+
+# INT D4h – User Defined / Reserved Interrupt
+
+## Definition
+INT D4h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D4h
+```
+
+---
+
+# INT D5h – User Defined / Reserved Interrupt
+
+## Definition
+INT D5h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D5h
+```
+
+---
+
+# INT D6h – User Defined / Reserved Interrupt
+
+## Definition
+INT D6h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D6h
+```
+
+---
+
+# INT D7h – User Defined / Reserved Interrupt
+
+## Definition
+INT D7h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D7h
+```
+
+---
+
+# INT D8h – User Defined / Reserved Interrupt
+
+## Definition
+INT D8h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D8h
+```
+
+---
+
+# INT D9h – User Defined / Reserved Interrupt
+
+## Definition
+INT D9h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int D9h
+```
+
+---
+
+# INT DAh – User Defined / Reserved Interrupt
+
+## Definition
+INT DAh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int DAh
+```
+
+---
+
+# INT DBh – User Defined / Reserved Interrupt
+
+## Definition
+INT DBh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int DBh
+```
+
+---
+
+# INT DCh – User Defined / Reserved Interrupt
+
+## Definition
+INT DCh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int DCh
+```
+
+---
+
+# INT DDh – User Defined / Reserved Interrupt
+
+## Definition
+INT DDh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int DDh
+```
+
+---
+
+# INT DEh – User Defined / Reserved Interrupt
+
+## Definition
+INT DEh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int DEh
+```
+
+---
+
+# INT DFh – User Defined / Reserved Interrupt
+
+## Definition
+INT DFh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int DFh
+```
+
+---
+
+# INT E0h – User Defined / Reserved Interrupt
+
+## Definition
+INT E0h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E0h
+```
+
+---
+
+# INT E1h – User Defined / Reserved Interrupt
+
+## Definition
+INT E1h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E1h
+```
+
+---
+
+# INT E2h – User Defined / Reserved Interrupt
+
+## Definition
+INT E2h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E2h
+```
+
+---
+
+# INT E3h – User Defined / Reserved Interrupt
+
+## Definition
+INT E3h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E3h
+```
+
+---
+
+# INT E4h – User Defined / Reserved Interrupt
+
+## Definition
+INT E4h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E4h
+```
+
+---
+
+# INT E5h – User Defined / Reserved Interrupt
+
+## Definition
+INT E5h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E5h
+```
+
+---
+
+# INT E6h – User Defined / Reserved Interrupt
+
+## Definition
+INT E6h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E6h
+```
+
+---
+
+# INT E7h – User Defined / Reserved Interrupt
+
+## Definition
+INT E7h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E7h
+```
+
+---
+
+# INT E8h – User Defined / Reserved Interrupt
+
+## Definition
+INT E8h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E8h
+```
+
+---
+
+# INT E9h – User Defined / Reserved Interrupt
+
+## Definition
+INT E9h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int E9h
+```
+
+---
+
+# INT EAh – User Defined / Reserved Interrupt
+
+## Definition
+INT EAh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int EAh
+```
+
+---
+
+# INT EBh – User Defined / Reserved Interrupt
+
+## Definition
+INT EBh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int EBh
+```
+
+---
+
+# INT ECh – User Defined / Reserved Interrupt
+
+## Definition
+INT ECh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int ECh
+```
+
+---
+
+# INT EDh – User Defined / Reserved Interrupt
+
+## Definition
+INT EDh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int EDh
+```
+
+---
+
+# INT EEh – User Defined / Reserved Interrupt
+
+## Definition
+INT EEh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int EEh
+```
+
+---
+
+# INT EFh – User Defined / Reserved Interrupt
+
+## Definition
+INT EFh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int EFh
+```
+
+---
+
+# INT F0h – User Defined / Reserved Interrupt
+
+## Definition
+INT F0h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F0h
+```
+
+---
+
+# INT F1h – User Defined / Reserved Interrupt
+
+## Definition
+INT F1h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F1h
+```
+
+---
+
+# INT F2h – User Defined / Reserved Interrupt
+
+## Definition
+INT F2h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F2h
+```
+
+---
+
+# INT F3h – User Defined / Reserved Interrupt
+
+## Definition
+INT F3h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F3h
+```
+
+---
+
+# INT F4h – User Defined / Reserved Interrupt
+
+## Definition
+INT F4h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F4h
+```
+
+---
+
+# INT F5h – User Defined / Reserved Interrupt
+
+## Definition
+INT F5h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F5h
+```
+
+---
+
+# INT F6h – User Defined / Reserved Interrupt
+
+## Definition
+INT F6h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F6h
+```
+
+---
+
+# INT F7h – User Defined / Reserved Interrupt
+
+## Definition
+INT F7h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F7h
+```
+
+---
+
+# INT F8h – User Defined / Reserved Interrupt
+
+## Definition
+INT F8h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F8h
+```
+
+---
+
+# INT F9h – User Defined / Reserved Interrupt
+
+## Definition
+INT F9h is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int F9h
+```
+
+---
+
+# INT FAh – User Defined / Reserved Interrupt
+
+## Definition
+INT FAh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int FAh
+```
+
+---
+
+# INT FBh – User Defined / Reserved Interrupt
+
+## Definition
+INT FBh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int FBh
+```
+
+---
+
+# INT FCh – User Defined / Reserved Interrupt
+
+## Definition
+INT FCh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int FCh
+```
+
+---
+
+# INT FDh – User Defined / Reserved Interrupt
+
+## Definition
+INT FDh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int FDh
+```
+
+---
+
+# INT FEh – User Defined / Reserved Interrupt
+
+## Definition
+INT FEh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int FEh
+```
+
+---
+
+# INT FFh – User Defined / Reserved Interrupt
+
+## Definition
+INT FFh is freely available for user applications, custom drivers, or operating systems to define their own Interrupt Service Routines (ISRs).
+
+---
+
+## Uses
+- Custom software interrupts
+- Inter-process communication
+- Hooking custom hardware drivers
+
+---
+
+## Example Code (8086 Assembly)
+
+```asm
+; Setup custom ISR in the IVT before calling
+int FFh
 ```
 
 ---
